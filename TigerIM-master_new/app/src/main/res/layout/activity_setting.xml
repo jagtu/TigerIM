@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_setting"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/gray_bg"
+    tools:context="cn.ittiger.im.activity.SettingActivity">
+
+    <include layout="@layout/layout_title"/>
+    <TextView
+        style="@style/line_common"
+        android:layout_marginTop="@dimen/dimen_20"
+        />
+    <TextView
+        android:id="@+id/tv_setting_clear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="清除缓存"
+        android:paddingLeft="@dimen/dimen_10"
+        android:paddingTop="@dimen/dimen_10"
+        android:paddingBottom="@dimen/dimen_10"
+        style="@style/text_black16"
+        android:background="@color/white"/>
+    <TextView
+        style="@style/line_common"
+        />
+</LinearLayout>

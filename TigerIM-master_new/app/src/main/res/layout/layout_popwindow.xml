@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:fitsSystemWindows="true">
+    <LinearLayout
+        android:id="@+id/pop_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/pop_bg"
+            android:gravity="center_horizontal"
+            android:layout_margin="@dimen/dimen_10">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="设置头像，让好友们认出是你"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/dimen_10"
+                style="@style/text_gray12" />
+            <TextView
+                style="@style/line_common"/>
+            <TextView
+                android:id="@+id/tv_pop_album"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="从照片中选择"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/newmaincolor"
+                android:textSize="@dimen/sp_16"/>
+            <TextView
+               style="@style/line_common"/>
+            <TextView
+                android:id="@+id/tv_pop_tickphoto"
+                android:layout_width="match_parent"
+                android:padding="@dimen/dimen_10"
+                android:layout_height="wrap_content"
+                android:textColor="@color/newmaincolor"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/sp_16"
+                android:text="拍照"/>
+        </LinearLayout>
+
+        <TextView
+          android:id="@+id/tv_pop_cancel"
+            android:layout_width="match_parent"
+            android:padding="@dimen/dimen_10"
+            android:layout_height="wrap_content"
+            android:textColor="@color/newmaincolor"
+            android:gravity="center_horizontal"
+            android:background="@drawable/pop_bg"
+            android:textSize="@dimen/sp_16"
+android:layout_margin="@dimen/dimen_10"
+            android:textStyle="bold"
+            android:text="取消"/>
+    </LinearLayout>
+
+
+</RelativeLayout>

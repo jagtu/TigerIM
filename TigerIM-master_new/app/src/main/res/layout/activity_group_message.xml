@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/gray_bg"
+              android:orientation="vertical"
+              tools:context="cn.ittiger.im.activity.GroupMessageActivity">
+
+    <include layout="@layout/layout_title"/>
+
+    <GridView
+        android:id="@+id/gw_group"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/white"
+        android:numColumns="6"
+        android:padding="@dimen/dimen_10"
+        android:verticalSpacing="@dimen/dimen_10"
+        />
+
+    <LinearLayout
+
+        android:id="@+id/ll_nickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_10"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="群名称"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_16"/>
+
+        <TextView
+            android:id="@+id/tv_personal_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_10"
+            android:layout_marginRight="10dp"
+            />
+
+        <ImageView
+            android:id="@+id/name_tt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/icon_right"
+            />
+    </LinearLayout>
+
+    <TextView
+        style="@style/line_common"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_group_gg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/dimen_10">
+
+        <TextView
+            android:id="@+id/tv_setmsg_title"
+            style="@style/text_black16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="群公告"/>
+
+        <TextView
+            style="@style/text_gray14"
+            android:id="@+id/text_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_setmsg_title"
+            android:layout_marginTop="@dimen/dimen_10"/>
+
+        <ImageView
+            android:id="@+id/noce_tt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/icon_right"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_setting_clear"
+        style="@style/text_black16"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_10"
+        android:background="@color/white"
+        android:paddingBottom="@dimen/dimen_10"
+        android:paddingLeft="@dimen/dimen_10"
+        android:paddingTop="@dimen/dimen_10"
+        android:visibility="gone"
+        android:text="清空聊天记录"/>
+
+    <TextView
+        style="@style/line_common"
+        />
+
+    <Button
+        android:id="@+id/bt_setting_exit"
+        style="@style/btn_common"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_20"
+        android:text="删除并退出"/>
+</LinearLayout>
