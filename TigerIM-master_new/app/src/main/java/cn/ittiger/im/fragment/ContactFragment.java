@@ -35,6 +35,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.roster.RosterEntry;
 
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -139,6 +140,8 @@ public class ContactFragment extends BaseFragment {
                 refreshSuccess();
             }
         });
+
+
     }
 
     private IndexHeaderFooterAdapter<ContactMenuEntity> getHeaderMenuAdapter() {
@@ -198,6 +201,18 @@ public class ContactFragment extends BaseFragment {
 
         super.onViewCreated(view, savedInstanceState);
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i("ContactFragment","ContactFragment onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("ContactFragment","ContactFragment onResume");
     }
 
     @Override

@@ -109,7 +109,10 @@ public class StartActivity extends BaseActivity {
                 }
                 key = mMemberBean.getPkey();
             } else {
-                api = RetrofitManager.getInstance(Constant.BASE_API).create(Api.class);
+
+                loginStart();
+                Toast.makeText(StartActivity.this, "登录已过期", Toast.LENGTH_SHORT).show();
+                return;
             }
 
             api.getConsumeList(key, usernameWithoutPrefix, user.getPassword())

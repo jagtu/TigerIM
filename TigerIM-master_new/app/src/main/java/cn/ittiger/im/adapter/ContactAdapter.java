@@ -86,4 +86,6 @@ public class ContactAdapter extends IndexStickyViewAdapter<ContactEntity> {
         viewHolder.getImageView().setImageResource(R.mipmap.icon_my_head);
         ImageLoaderHelper.loadImg(viewHolder.getImageView(), itemData.getRosterEntry().getName());
     }
+
+
 }

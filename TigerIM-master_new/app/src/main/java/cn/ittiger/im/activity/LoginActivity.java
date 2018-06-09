@@ -36,6 +36,7 @@ import cn.ittiger.im.bean.UserInfo;
 import cn.ittiger.im.smack.SmackManager;
 import cn.ittiger.im.ui.ListViewDialog;
 import cn.ittiger.im.util.LoginHelper;
+import cn.ittiger.im.util.StringUtils;
 import cn.ittiger.util.ActivityUtil;
 import cn.ittiger.util.PreferenceHelper;
 import cn.ittiger.util.UIUtil;
@@ -107,9 +108,17 @@ public class LoginActivity extends BaseActivity {
     private void initViews() {
         SmackManager.getInstance();
         mListViewDialog = new ListViewDialog(mActivity);
+
+        if (mMemberBean!=null && !StringUtils.isNullOrEmpty(mMemberBean.getName())) {
+            mTvChangeMember.setText(mMemberBean.getName());
+        }else {
+            mTvChangeMember.setText("请选择会员系统");
+        }
+
         dialog = new ProgressDialog(mActivity);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setMessage("登录中...");
+
         mEditTextUser.setCursorVisible(false);// 内容清空后将编辑框1的光标隐藏，提升用户的体验度
         mEditTextUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,8 +180,7 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 //        mBtnLogin.setEnabled(false);
-        dialog.setMessage("登录中");
-        dialog.show();
+
         final SmackManager smackManager = SmackManager.getInstance();
         if (smackManager.getConnection() == null) {
             smackManager.connect();
@@ -183,8 +191,14 @@ public class LoginActivity extends BaseActivity {
             api = RetrofitManager.getInstance(mMemberBean.getUrl() + "/customer/service/").create(Api.class);
             key = mMemberBean.getPkey();
         } else {
-            api = RetrofitManager.getInstance(Constant.BASE_API).create(Api.class);
+//            api = RetrofitManager.getInstance(Constant.BASE_API).create(Api.class);
+
+            UIUtil.showToast(this, getString(R.string.login_error_system));
+            return;
         }
+
+        dialog.setMessage("登录中");
+        dialog.show();
 
         api.getConsumeList(key, username, password)
                 .flatMap(new Func1<WrapData<UserInfo>, Observable<LoginResult>>() {
@@ -294,6 +308,14 @@ public class LoginActivity extends BaseActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     mMemberBean = memberBeans.get(which);
                                     App.getInstance().mMemberBean = mMemberBean;
+
+
+                                    if (mMemberBean!=null && !StringUtils.isNullOrEmpty(mMemberBean.getName())) {
+                                        mTvChangeMember.setText(mMemberBean.getName());
+                                    }else {
+                                        mTvChangeMember.setText("请选择会员系统");
+                                    }
+
                                     PreferenceHelper.putString("member", mMemberBean.getPrefix());
                                     LoginHelper.saveMemberBean(mMemberBean);
                                     dialog.dismiss();

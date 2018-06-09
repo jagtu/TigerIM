@@ -44,8 +44,10 @@ public class QueryProvider extends IQProvider<QueryRoom> {
                         String id = parser.getAttributeValue("", "jid");//id
                         String name = parser.getAttributeValue("", "name");//name
                         String owner = parser.getAttributeValue("", "owner");
+                        String notice = parser.getAttributeValue("", "notice");
+                        String roomimg = parser.getAttributeValue("", "roomimg");
                         //解析来处理发送
-                        roomBean = new RoomBean(id, name,owner);
+                        roomBean = new RoomBean(id, name,owner,notice,roomimg);
                         SmackMultiChatManager.saveMultiChat(roomBean);
                         EventBus.getDefault().post(roomBean);  //room
                     }

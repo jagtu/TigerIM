@@ -16,7 +16,8 @@
         android:layout_width="44dp"
         android:layout_height="44dp"
         android:layout_gravity="center_vertical"
-        android:background="@mipmap/icon_my_head"
+        android:src="@mipmap/icon_my_head"
+        android:background="@drawable/head_shape_corner"
         android:layout_marginLeft="@dimen/dimen_5"/>
 
     <TextView

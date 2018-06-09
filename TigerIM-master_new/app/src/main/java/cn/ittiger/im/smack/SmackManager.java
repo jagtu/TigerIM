@@ -20,6 +20,7 @@ import cn.ittiger.im.provider.query.QueryRoom;
 import cn.ittiger.im.provider.roomuser.ChangeNotice;
 import cn.ittiger.im.provider.roomuser.RoomUser;
 import cn.ittiger.im.util.LoginHelper;
+import cn.ittiger.im.util.SystemUtils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -163,6 +164,9 @@ public class SmackManager {
                     //开启调试模式
                     .setDebuggerEnabled(true).build();
 
+            //by jagtu
+            //end
+
             // 根据配置生成一个连接
             final XMPPTCPConnection connection = new XMPPTCPConnection(config);
 
@@ -213,14 +217,19 @@ public class SmackManager {
      * @throws Exception
      */
     public LoginResult login(String username, String password) {
+
+        //by jagtu
+        //SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
+        //end
         SASLAuthentication.blacklistSASLMechanism("SCRAM-SHA-1");
-        SASLAuthentication.blacklistSASLMechanism("DIGEST-MD5");
+        SASLAuthentication.blacklistSASLMechanism("DIGEST-MD5");//DIGEST-MD5
 
         try {
             if (!isConnected()) {
                 return new LoginResult(false, "null");
             }
 
+            Log.i("=====", "===登录"+username);
             mConnection.login(username, password);
             Log.i("=====", "===走了这里");
             //设置成在线，这里如果改成unavailable则会显示用户不在线
@@ -660,6 +669,8 @@ public class SmackManager {
 //        Bitmap bitmap = BitmapFactory.decodeStream(bais);
         if (bitmap != null) {
             Log.i(TAG, "getUserImage: " + name + "," + bitmap.getByteCount());
+
+            bitmap = SystemUtils.createCircleImage(bitmap);
         }
         return bitmap;
     }

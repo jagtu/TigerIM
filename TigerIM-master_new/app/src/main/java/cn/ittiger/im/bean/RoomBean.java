@@ -29,13 +29,25 @@ public class RoomBean implements Parcelable{
     @Column(columnName = "owner")
     private String owner;
     @Column(columnName = "notice")
-    private String notice;
+    private String notice;//notice="群公告"
+
+    @Column(columnName = "roomimg")
+    private String roomimg;//roomimg="群头像"
 
     public RoomBean(String roomJid, String name,String owner) {
         mRoomJid = roomJid;
         mName = name;
         this.owner = owner;
         this.notice = "";
+        this.roomimg = "";
+    }
+
+    public RoomBean(String roomJid, String name,String owner, String notice,String roomimg) {
+        mRoomJid = roomJid;
+        mName = name;
+        this.owner = owner;
+        this.notice = notice;
+        this.roomimg = roomimg;
     }
 
     protected RoomBean(Parcel in) {
@@ -44,6 +56,7 @@ public class RoomBean implements Parcelable{
         mName = in.readString();
         owner = in.readString();
         notice = in.readString();
+        roomimg = in.readString();
     }
 
     public static final Creator<RoomBean> CREATOR = new Creator<RoomBean>() {
@@ -109,6 +122,14 @@ public class RoomBean implements Parcelable{
         this.notice = notice;
     }
 
+    public String getRoomimg() {
+        return roomimg;
+    }
+
+    public void setRoomimg(String roomimg) {
+        this.roomimg = roomimg;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -121,6 +142,7 @@ public class RoomBean implements Parcelable{
         parcel.writeString(mName);
         parcel.writeString(owner);
         parcel.writeString(notice);
+        parcel.writeString(roomimg);
     }
 
     @Override

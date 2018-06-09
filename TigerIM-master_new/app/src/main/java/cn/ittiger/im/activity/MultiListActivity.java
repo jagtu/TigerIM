@@ -43,6 +43,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
+/**
+ * 群聊列表
+ */
 public class MultiListActivity extends BaseActivity {
 
     @BindView(R.id.multi_rv)
@@ -74,9 +77,11 @@ public class MultiListActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_list);
+
         ButterKnife.bind(this);
         mAdd.setVisibility(View.VISIBLE);
-        mTitle.setText("群聊");
+        mTitle.setText("群聊");//群聊列表
+
         mMultiContactAdapter = new MultiContactAdapter(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mMultiContactAdapter);

@@ -102,6 +102,34 @@
     </LinearLayout>
     <TextView
         style="@style/line_common"
+        android:layout_marginLeft="@dimen/dimen_10"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="系统"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_16"
+            android:padding="@dimen/dimen_12"
+            />
+        <TextView
+            android:id="@+id/tv_system_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="会员系统*"
+            style="@style/text_gray16"
+            android:paddingRight="@dimen/dimen_10"/>
+
+    </LinearLayout>
+    <TextView
+        style="@style/line_common"
         android:layout_marginTop="@dimen/dimen_20"
         />
     <LinearLayout
@@ -139,6 +167,7 @@
         style="@style/line_common"
         android:layout_marginLeft="@dimen/dimen_10"
         />
+    <!--
     <LinearLayout
         android:id="@+id/ll_delails_email"
         android:layout_width="match_parent"
@@ -203,6 +232,7 @@
             android:layout_marginLeft="@dimen/dimen_10"
             />
     </LinearLayout>
+
     <TextView
         style="@style/line_common"
         />
@@ -210,6 +240,8 @@
         style="@style/line_common"
         android:layout_marginTop="@dimen/dimen_20"
         />
+        -->
+
     <LinearLayout
         android:id="@+id/ll_delails_exit"
         android:layout_width="match_parent"

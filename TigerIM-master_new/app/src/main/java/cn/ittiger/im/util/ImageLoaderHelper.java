@@ -102,7 +102,11 @@ public class ImageLoaderHelper {
     }
 
     public static void loadImg(final ImageView imageView,  String name) {
-        final String userName = name;
+
+        //bu jagtu
+        String prefix = PreferenceHelper.getString("member");
+
+        final String userName = (name.indexOf("#")==-1) ? (prefix + name) : name;
         imageView.setTag(userName);
         Observable.just(imageView)
                 .map(new Func1<ImageView, ImageView>() {
@@ -113,6 +117,7 @@ public class ImageLoaderHelper {
                         if (bitmap == null) {
                             bitmap = SmackManager.getInstance().getUserImage(name);
                             if (bitmap != null) {
+                                bitmap = SystemUtils.createCircleImage(bitmap);
                                 LruUtils.getInstance().getMemoryCache().put(name, bitmap);
                             }
                         }
@@ -136,6 +141,7 @@ public class ImageLoaderHelper {
                     public void onNext(ImageView imageView) {
                         Bitmap bitmap = LruUtils.getInstance().getMemoryCache().get(imageView.getTag() + "");
                         if (bitmap != null && imageView.getTag().equals(userName)) {
+                            bitmap = SystemUtils.createCircleImage(bitmap);
                             imageView.setImageBitmap(bitmap);
                             Log.i("bitmap", "onNext: "+bitmap.getByteCount());
                         } else {

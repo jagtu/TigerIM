@@ -2,8 +2,11 @@ package cn.ittiger.im.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,8 @@ import cn.ittiger.im.R;
 import cn.ittiger.im.activity.MultiChatActivity;
 import cn.ittiger.im.bean.RoomBean;
 import cn.ittiger.im.util.DBHelper;
+import cn.ittiger.im.util.StringUtils;
+import cn.ittiger.im.util.SystemUtils;
 
 /**
  * <pre>
@@ -104,7 +109,18 @@ public class MultiContactAdapter extends  RecyclerView.Adapter<MultiContactAdapt
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
         final RoomBean roomBean = mRoomBeans.get(position);
+
         holder.mImageView.setImageResource(R.drawable.multi_icon);
+        //by jagtu 设置群头像
+        if (!StringUtils.isNullOrEmpty(roomBean.getRoomimg())){
+            byte[] bytes = Base64.decode(roomBean.getRoomimg(), Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            if (bitmap!=null) {
+                bitmap = SystemUtils.createCircleImage(bitmap);
+                holder.mImageView.setImageBitmap(bitmap);
+            }
+        }
+
         holder.mTextView.setText(roomBean.getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

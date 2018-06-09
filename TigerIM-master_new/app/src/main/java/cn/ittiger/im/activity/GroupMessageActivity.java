@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +16,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jivesoftware.smack.roster.RosterEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ittiger.base.BaseActivity;
 import cn.ittiger.im.R;
+import cn.ittiger.im.bean.CheckableContactEntity;
 import cn.ittiger.im.bean.RoomBean;
 import cn.ittiger.im.bean.RoomUser;
 import cn.ittiger.im.smack.SmackManager;
@@ -35,6 +39,7 @@ import cn.ittiger.im.util.DBHelper;
 import cn.ittiger.im.util.DBQueryHelper;
 import cn.ittiger.im.util.ImageLoaderHelper;
 import cn.ittiger.im.util.LoginHelper;
+import cn.ittiger.im.util.StringUtils;
 import cn.ittiger.util.PreferenceHelper;
 import rx.Observable;
 import rx.Subscriber;
@@ -109,7 +114,9 @@ public class GroupMessageActivity extends BaseActivity implements View.OnClickLi
         Intent intent = getIntent();
         mRoomBean = intent.getParcelableExtra("key03");
         tvPersonalNickname.setText(mRoomBean.getName());
-
+        if (!StringUtils.isNullOrEmpty(mRoomBean.getNotice())){
+            mNotice.setText(mRoomBean.getNotice());
+        }
         messages.clear();
         Observable.create(new Observable.OnSubscribe<List<RoomUser>>() {
             @Override
@@ -140,24 +147,54 @@ public class GroupMessageActivity extends BaseActivity implements View.OnClickLi
         btSettingExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //删除并退出群
+                //by jagtu
+
                 dialog.show();
-                getWindow().getDecorView().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        MultiListActivity.goActivity(GroupMessageActivity.this, mRoomBean);
-                        GroupMessageActivity.this.finish();
-                        dialog.dismiss();
+
+                if (!mRoomBean.getOwner().equals(LoginHelper.getUser().getUsername())) {
+                    //非群主 退出群组
+
+                    getWindow().getDecorView().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            MultiListActivity.goActivity(GroupMessageActivity.this, mRoomBean);
+                            GroupMessageActivity.this.finish();
+                            dialog.dismiss();
+                        }
+                    }, 1500);
+
+                    try {
+                        Map<String, String> roomUser = new ArrayMap<>();
+                        String userName = LoginHelper.getUser().getUsername();
+                        roomUser.put(userName, userName);
+                        SmackManager.getInstance().exitRoom(roomUser, mRoomBean.getRoomJid(), userName);
+                        DBHelper.getInstance().getSQLiteDB().delete(mRoomBean);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                }, 1500);
-                Map<String, String> map = new HashMap<>();
-                map.put("groupname", mRoomBean.getRoomJid());
-                try {
-                    SmackManager.getInstance().deleteRoom(map);
-                    DBHelper.getInstance().getSQLiteDB().delete(mRoomBean);
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                } else {
+
+                    //群主
+                    //删除并退出群
+                    getWindow().getDecorView().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            MultiListActivity.goActivity(GroupMessageActivity.this, mRoomBean);
+                            GroupMessageActivity.this.finish();
+                            dialog.dismiss();
+                        }
+                    }, 1500);
+                    Map<String, String> map = new HashMap<>();
+                    map.put("groupname", mRoomBean.getRoomJid());
+                    try {
+                        SmackManager.getInstance().deleteRoom(map);
+                        DBHelper.getInstance().getSQLiteDB().delete(mRoomBean);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
         });
         final String username = LoginHelper.getUser().getUsername();
@@ -165,13 +202,17 @@ public class GroupMessageActivity extends BaseActivity implements View.OnClickLi
             mRoomBean.setOwner(mRoomBean.getOwner().substring(0,mRoomBean.getOwner().indexOf("@")));
         }
         if (!mRoomBean.getOwner().equals(username)) {
-            btSettingExit.setVisibility(View.GONE);
+            //非群主 by jagtu
+//            btSettingExit.setVisibility(View.GONE);
+            btSettingExit.setText("退出群组");
             rlGroupGg.setClickable(false);
             llNickname.setClickable(false);
             mNameTt.setVisibility(View.GONE);
             mNoceTt.setVisibility(View.GONE);
         } else {
-            btSettingExit.setVisibility(View.VISIBLE);
+            //群主
+//            btSettingExit.setVisibility(View.VISIBLE);
+            btSettingExit.setText("删除并退出");
             rlGroupGg.setClickable(true);
             llNickname.setClickable(true);
             mNameTt.setVisibility(View.VISIBLE);
@@ -179,7 +220,7 @@ public class GroupMessageActivity extends BaseActivity implements View.OnClickLi
         }
         dialog = new ProgressDialog(this);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setMessage("删除中...");
+        dialog.setMessage("加载中...");
 
         mAdapter = new BaseAdapter() {
             @Override
@@ -260,7 +301,8 @@ public class GroupMessageActivity extends BaseActivity implements View.OnClickLi
                     holder.imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            //点击时间
+                            Log.i("imageView","onClick");
                         }
                     });
                 }

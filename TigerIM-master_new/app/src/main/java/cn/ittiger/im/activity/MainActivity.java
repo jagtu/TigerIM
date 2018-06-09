@@ -131,6 +131,14 @@ public class MainActivity extends IMBaseActivity {
                 mTitleTv.setText(R.string.text_contact);
                // mAddIv.setVisibility(View.GONE);
                 mPagerVp.setCurrentItem(1,false);
+
+                //by jagtu
+                try {
+                    SmackManager.getInstance().queryRoom();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 break;
             case R.id.third_ll:
                 mFirstIv.setSelected(false);

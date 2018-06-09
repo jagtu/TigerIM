@@ -47,6 +47,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ittiger.base.BaseActivity;
 import cn.ittiger.im.R;
+import cn.ittiger.im.app.App;
 import cn.ittiger.im.bean.User;
 import cn.ittiger.im.constant.MessageType;
 import cn.ittiger.im.smack.SmackManager;
@@ -55,6 +56,7 @@ import cn.ittiger.im.ui.SelectPicPopupWindow;
 import cn.ittiger.im.util.AppFileHelper;
 import cn.ittiger.im.util.ImageLoaderHelper;
 import cn.ittiger.im.util.LoginHelper;
+import cn.ittiger.im.util.SystemUtils;
 import cn.ittiger.util.BitmapUtil;
 import cn.ittiger.util.DateUtil;
 import cn.ittiger.util.FileUtil;
@@ -90,14 +92,16 @@ public class PersonalDetailsActivity extends BaseActivity implements View.OnClic
     CircleImageView imPersonalHead;
     @BindView(R.id.tv_personal_nickname)
     TextView tvPersonalNickname;
+    @BindView(R.id.tv_system_name)
+    TextView tvSystemName;
     @BindView(R.id.ll_personal_changehead)
     LinearLayout llPersonalChangehead;
     @BindView(R.id.ll_delails_sex)
     LinearLayout llDelailsSex;
-    @BindView(R.id.ll_delails_email)
-    LinearLayout llDelailsEmail;
-    @BindView(R.id.ll_delails_signature)
-    LinearLayout llDelailsSignature;
+//    @BindView(R.id.ll_delails_email)
+//    LinearLayout llDelailsEmail;
+//    @BindView(R.id.ll_delails_signature)
+//    LinearLayout llDelailsSignature;
     @BindView(R.id.ll_delails_exit)
     LinearLayout llDelailsExit;
     @BindView(R.id.user_name)
@@ -152,7 +156,11 @@ public class PersonalDetailsActivity extends BaseActivity implements View.OnClic
         }
         if (bais == null)
             return null;
-        return BitmapFactory.decodeStream(bais);
+        Bitmap bitmap=  BitmapFactory.decodeStream(bais);
+
+        bitmap = SystemUtils.createCircleImage(bitmap);
+
+        return bitmap;
     }
 
     @Override
@@ -180,15 +188,22 @@ public class PersonalDetailsActivity extends BaseActivity implements View.OnClic
            }
             ImageLoaderHelper.loadImg(imPersonalHead, avatName);
         }
+
+        if (App.getInstance().mMemberBean != null) {
+            tvSystemName.setText(App.getInstance().mMemberBean.getName());
+        }else {
+            tvSystemName.setText("**");
+        }
+
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage("正在退出...");
         imTitleBack.setOnClickListener(this);
         llNickname.setOnClickListener(this);
         llDelailsExit.setOnClickListener(this);
         llPersonalChangehead.setOnClickListener(this);
-        llDelailsEmail.setOnClickListener(this);
+//        llDelailsEmail.setOnClickListener(this);
         llDelailsSex.setOnClickListener(this);
-        llDelailsSignature.setOnClickListener(this);
+//        llDelailsSignature.setOnClickListener(this);
     }
 
     @Override
@@ -221,14 +236,8 @@ public class PersonalDetailsActivity extends BaseActivity implements View.OnClic
             case R.id.ll_personal_changehead://头像
                 showPopFormBottom(view);
                 break;
-            case R.id.ll_delails_email://邮箱
-                startActivity(new Intent(mActivity, EmailActivity.class));
-                break;
             case R.id.ll_delails_sex://性别
                 startActivity(new Intent(mActivity, ChangeSexActivity.class));
-                break;
-            case R.id.ll_delails_signature://个性签名
-                startActivity(new Intent(mActivity, PersionSignatureActivity.class));
                 break;
         }
 

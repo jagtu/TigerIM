@@ -111,7 +111,14 @@ public class ChatAdapter extends HeaderAndFooterAdapter<ChatMessage> {
                     playVoice(viewHolder.chatContentVoice, message);
                 }
             });
-            viewHolder.chatContentText.setText(message.getContent());
+            //by jagtu 修改
+            String content = "       " + message.getContent();;
+            if (message.isMeSend()) {
+//                content = "             " + message.getContent();
+            }else {
+
+            }
+            viewHolder.chatContentText.setText(content);
 //            showLoading(viewHolder, message);
         }
     }
