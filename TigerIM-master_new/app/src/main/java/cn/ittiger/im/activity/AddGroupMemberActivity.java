@@ -95,7 +95,7 @@ public class AddGroupMemberActivity extends IMBaseActivity {
                 if (friends != null) {
                     for (RosterEntry friend : friends) {
                         if (friend.getName() != null) {
-                            //排除客服
+                            //排除客服 by jagtu
                             if (friend.getName().startsWith("#") || friend.getName().equals(LoginHelper.getUser().getUsername())) {
                                 continue;
                             }

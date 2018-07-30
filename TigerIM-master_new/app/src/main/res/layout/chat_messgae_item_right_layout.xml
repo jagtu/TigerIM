@@ -33,18 +33,17 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="@dimen/dimen_5"
             android:layout_toLeftOf="@+id/iv_chat_avatar"/>
-        <ImageView
+
+        <cn.ittiger.im.ui.CircleImageView
             android:id="@+id/iv_chat_avatar"
             android:layout_width="@dimen/dimen_40"
             android:layout_height="@dimen/dimen_40"
-            android:layout_marginTop="5dp"
             android:layout_below="@id/tv_chat_msg_username"
             android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
             android:focusable="false"
             android:scaleType="centerCrop"
-            app:srcCompat="@mipmap/icon_my_head"/>
-
-
+            android:src="@mipmap/icon_my_head"/>
 
         <RelativeLayout
             android:id="@+id/rl_chat_msg_content_layout"

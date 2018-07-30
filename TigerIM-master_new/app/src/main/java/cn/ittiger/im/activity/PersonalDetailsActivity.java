@@ -56,6 +56,7 @@ import cn.ittiger.im.ui.SelectPicPopupWindow;
 import cn.ittiger.im.util.AppFileHelper;
 import cn.ittiger.im.util.ImageLoaderHelper;
 import cn.ittiger.im.util.LoginHelper;
+import cn.ittiger.im.util.LruUtils;
 import cn.ittiger.im.util.SystemUtils;
 import cn.ittiger.util.BitmapUtil;
 import cn.ittiger.util.DateUtil;
@@ -186,7 +187,7 @@ public class PersonalDetailsActivity extends BaseActivity implements View.OnClic
            if(TextUtils.isEmpty(avatName)){
                avatName = user.getUsername();
            }
-            ImageLoaderHelper.loadImg(imPersonalHead, avatName);
+            ImageLoaderHelper.loadCornerImg(imPersonalHead, avatName);
         }
 
         if (App.getInstance().mMemberBean != null) {
@@ -219,6 +220,7 @@ public class PersonalDetailsActivity extends BaseActivity implements View.OnClic
                 break;
             case R.id.ll_delails_exit://退出
                 //退出登录
+                mProgressDialog.setMessage("正在退出...");
                 mProgressDialog.show();
                 LoginHelper.saveUser(null);
                 SmackManager.getInstance().logout();
@@ -343,6 +345,9 @@ public class PersonalDetailsActivity extends BaseActivity implements View.OnClic
     private void setUserImage(final XMPPConnection connection, final byte[] image) throws XMPPException {
 
 
+        mProgressDialog.setMessage("上传头像...");
+        mProgressDialog.show();
+
         final VCard card = new VCard();
         try {
             card.load(connection);
@@ -362,6 +367,7 @@ public class PersonalDetailsActivity extends BaseActivity implements View.OnClic
             }
         }
 
+        //*
         rx.Observable.just(connection)
                 .flatMap(new Func1<XMPPConnection, rx.Observable<String>>() {
                     @Override
@@ -393,8 +399,11 @@ public class PersonalDetailsActivity extends BaseActivity implements View.OnClic
                     @Override
                     public void call(String s) {
                         Toast.makeText(mActivity, s, Toast.LENGTH_SHORT).show();
+
+                        mProgressDialog.dismiss();
                     }
                 });
+        //*/
     }
 
     public static byte[] fileToBytes(File file) throws IOException {

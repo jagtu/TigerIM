@@ -38,6 +38,8 @@ public class ContactEntity implements BaseEntity {
         return mRosterEntry.getName();
     }
 
+
+
     public RosterEntry getRosterEntry() {
 
         return mRosterEntry;

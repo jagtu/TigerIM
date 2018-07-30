@@ -6,10 +6,10 @@
               android:layout_height="match_parent">
 
 
-        <cn.ittiger.indexlist.IndexStickyView
+        <cn.ittiger.im.ui.iskyView.IndexStickyView
             android:id="@+id/indexStickyView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:sideBarBackgroundColor="@color/transparency">
-        </cn.ittiger.indexlist.IndexStickyView>
+        </cn.ittiger.im.ui.iskyView.IndexStickyView>
 </LinearLayout>

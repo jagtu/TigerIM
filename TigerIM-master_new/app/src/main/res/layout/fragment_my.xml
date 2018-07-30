@@ -19,6 +19,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@mipmap/icon_my_head"
+            android:focusable="true"
+            android:clickable="true"
             android:padding="@dimen/dimen_10"/>
         <LinearLayout
             android:layout_width="wrap_content"

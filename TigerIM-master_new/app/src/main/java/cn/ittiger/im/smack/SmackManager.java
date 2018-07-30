@@ -670,7 +670,7 @@ public class SmackManager {
         if (bitmap != null) {
             Log.i(TAG, "getUserImage: " + name + "," + bitmap.getByteCount());
 
-            bitmap = SystemUtils.createCircleImage(bitmap);
+//            bitmap = SystemUtils.createCircleImage(bitmap);
         }
         return bitmap;
     }

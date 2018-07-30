@@ -3,6 +3,7 @@ package cn.ittiger.im.activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.ArrayMap;
 import android.util.Log;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +39,7 @@ import cn.ittiger.im.bean.RoomUser;
 import cn.ittiger.im.smack.SmackManager;
 import cn.ittiger.im.util.DBHelper;
 import cn.ittiger.im.util.DBQueryHelper;
+import cn.ittiger.im.util.IMUtil;
 import cn.ittiger.im.util.ImageLoaderHelper;
 import cn.ittiger.im.util.LoginHelper;
 import cn.ittiger.im.util.StringUtils;
@@ -46,6 +49,8 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+
+import static cn.ittiger.im.smack.SmackManager.SERVER_IP;
 
 /**
  * 群组信息
@@ -147,7 +152,7 @@ public class GroupMessageActivity extends BaseActivity implements View.OnClickLi
         btSettingExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //by jagtu
+                //by jagtu 退出群组
 
                 dialog.show();
 
@@ -202,7 +207,7 @@ public class GroupMessageActivity extends BaseActivity implements View.OnClickLi
             mRoomBean.setOwner(mRoomBean.getOwner().substring(0,mRoomBean.getOwner().indexOf("@")));
         }
         if (!mRoomBean.getOwner().equals(username)) {
-            //非群主 by jagtu
+            //by jagtu 退出群组
 //            btSettingExit.setVisibility(View.GONE);
             btSettingExit.setText("退出群组");
             rlGroupGg.setClickable(false);
@@ -287,10 +292,13 @@ public class GroupMessageActivity extends BaseActivity implements View.OnClickLi
 
                     final RoomUser roomUser = mList.get(position);
 
-                    holder.imageView.setTag(roomUser.getJid());
+                    //by jagtu
+                    holder.imageView.setTag(position);
+
+//                    holder.imageView.setTag(roomUser.getJid());
                     Log.i("====","===JIDJID=="+roomUser.getJid());
                     holder.imageView.setImageResource(R.mipmap.icon_my_head);
-                    ImageLoaderHelper.loadImg(holder.imageView, roomUser.getJid());
+                    ImageLoaderHelper.loadCornerImg(holder.imageView, roomUser.getJid());
 
                     String prefix = PreferenceHelper.getString("member");
                     String username = roomUser.getJid();
@@ -298,13 +306,33 @@ public class GroupMessageActivity extends BaseActivity implements View.OnClickLi
                         username = roomUser.getJid().substring(prefix.length(), roomUser.getJid().length());
                     }
                     holder.item_name.setText(username);
+                    /* by jagtu 20180711 不要点击前往聊天
                     holder.imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             //点击时间
-                            Log.i("imageView","onClick");
+                            String userName = (String)v.getTag();
+                            String userJid = userName.indexOf("@")==-1?(userName+"@"+SERVER_IP):userName;
+                            Log.i("imageView","onClick"+userName);
+                            Boolean isHave = false;
+                            Set<RosterEntry> friends = SmackManager.getInstance().getAllFriends();
+                            if(friends!=null){
+                                for (RosterEntry friend : friends) {
+                                    if (userJid.contains(friend.getName())){
+                                        isHave = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (isHave) {
+                                IMUtil.startChatActivity(GroupMessageActivity.this, userJid,userName);
+                            }else {
+                                Toast.makeText(GroupMessageActivity.this,"非好友无法聊天",Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                     });
+                    //*/
                 }
                 return convertView;
             }

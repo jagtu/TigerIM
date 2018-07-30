@@ -1,5 +1,7 @@
 package cn.ittiger.im.util;
 
+import android.util.Log;
+
 import cn.ittiger.im.app.App;
 import cn.ittiger.im.bean.ChatMessage;
 import cn.ittiger.im.bean.ChatRecord;
@@ -147,6 +149,7 @@ public class DBQueryHelper {
         return DBHelper.getInstance().getSQLiteDB().query(ChatMessage.class, whereClause, whereArgs);
     }
 
+
     public static List<RoomUser> queryRoomUser(RoomBean roomBean) {
 
         String whereClause = "roomJid=?";
@@ -176,4 +179,45 @@ public class DBQueryHelper {
         }
         return roomBean.getName();
     }
+
+    //by jagtu
+    public static void deleteChatMessage(String chatJid) {
+
+        String whereClause = "meUserName=? and friendUserName=?";
+        String[] whereArgs = {LoginHelper.getUser().getUsername() ,chatJid};
+        DBHelper.getInstance().getSQLiteDB().delete(ChatMessage.class, whereClause, whereArgs);
+
+        ChatMessage chatMessage = DBHelper.getInstance().getSQLiteDB().queryOne(ChatMessage.class, whereClause, whereArgs);
+        if (chatMessage!=null){
+            Log.e("error","delete chatMessage fail!");
+        }
+    }
+
+
+    public static void deleteChatUser(String friendUserName) {
+
+        String whereClause = "meUserName=? and friendUserName=?";
+        String[] whereArgs = {LoginHelper.getUser().getUsername(), friendUserName};
+        DBHelper.getInstance().getSQLiteDB().delete(ChatUser.class, whereClause, whereArgs);
+
+
+        ChatUser chatUser = DBHelper.getInstance().getSQLiteDB().queryOne(ChatUser.class, whereClause, whereArgs);
+        if (chatUser!=null){
+            Log.e("error","deleteChatUser fail!");
+        }
+    }
+
+
+    public static void deleteChatRecord(String chatJid) {
+
+        String whereClause = "meUserName=? and friendUserName=?";
+        String[] whereArgs = {LoginHelper.getUser().getUsername(), chatJid};
+        DBHelper.getInstance().getSQLiteDB().delete(ChatRecord.class, whereClause, whereArgs);
+
+        ChatRecord chatRecord = DBHelper.getInstance().getSQLiteDB().queryOne(ChatRecord.class, whereClause, whereArgs);
+        if (chatRecord!=null){
+            Log.e("error","delete ChatRecord fail!");
+        }
+    }
+
 }

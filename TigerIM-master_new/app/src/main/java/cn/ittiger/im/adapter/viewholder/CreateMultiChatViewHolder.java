@@ -3,6 +3,7 @@ package cn.ittiger.im.adapter.viewholder;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ittiger.im.R;
+import cn.ittiger.im.ui.CircleImageView;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -17,7 +18,7 @@ public class CreateMultiChatViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.contact_check)
     ImageView checkImageView;
     @BindView(R.id.contact_avatar)
-    ImageView avatar;
+    CircleImageView avatar;
     @BindView(R.id.contact_name)
     TextView name;
 
@@ -32,7 +33,7 @@ public class CreateMultiChatViewHolder extends RecyclerView.ViewHolder {
         return checkImageView;
     }
 
-    public ImageView getImageView() {
+    public CircleImageView getImageView() {
 
         return avatar;
     }

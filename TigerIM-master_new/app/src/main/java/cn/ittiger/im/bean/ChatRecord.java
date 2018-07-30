@@ -9,6 +9,10 @@ import cn.ittiger.util.DateUtil;
 
 import android.os.Parcel;
 
+import static cn.ittiger.im.constant.MessageType.MESSAGE_TYPE_IMAGE;
+import static cn.ittiger.im.constant.MessageType.MESSAGE_TYPE_TEXT;
+import static cn.ittiger.im.constant.MessageType.MESSAGE_TYPE_VOICE;
+
 /**
  * 聊天记录实体对象
  *
@@ -107,7 +111,16 @@ public class ChatRecord extends ChatUser {
             setFileJid(fileJid);
         }
         setChatTime(chatMessage.getDatetime());
-        setLastMessage(chatMessage.getContent());
+
+        if (chatMessage.getMessageType() == MESSAGE_TYPE_TEXT.value()) {
+            setLastMessage(chatMessage.getContent());
+        }else if (chatMessage.getMessageType() == MESSAGE_TYPE_IMAGE.value()) {
+            setLastMessage("[图片]");
+        }else if (chatMessage.getMessageType() == MESSAGE_TYPE_VOICE.value()) {
+            setLastMessage(chatMessage.getContent());setLastMessage("[语音]");
+        }else{
+            setLastMessage(chatMessage.getContent());
+        }
         setUuid(chatMessage.getUuid());
         if(chatMessage.isMeSend()){
             initMessageCount();

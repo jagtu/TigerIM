@@ -1,9 +1,11 @@
 package cn.ittiger.im.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +25,14 @@ import cn.ittiger.im.bean.ChatMessage;
 import cn.ittiger.im.constant.EmotionType;
 import cn.ittiger.im.constant.FileLoadState;
 import cn.ittiger.im.constant.MessageType;
+import cn.ittiger.im.ui.CircleImageView;
 import cn.ittiger.im.ui.recyclerview.HeaderAndFooterAdapter;
 import cn.ittiger.im.ui.recyclerview.ViewHolder;
 import cn.ittiger.im.util.ChatTimeUtil;
 import cn.ittiger.im.util.EmotionUtil;
 import cn.ittiger.im.util.ImageLoaderHelper;
 import cn.ittiger.im.util.LoginHelper;
+import cn.ittiger.im.util.LruUtils;
 
 /**
  * 消息列表数据适配器
@@ -49,6 +53,7 @@ public class ChatAdapter extends HeaderAndFooterAdapter<ChatMessage> {
 
         super(list);
         mContext = context;
+
     }
 
     @Override
@@ -66,7 +71,9 @@ public class ChatAdapter extends HeaderAndFooterAdapter<ChatMessage> {
         } else {
             view = LayoutInflater.from(mContext).inflate(R.layout.chat_messgae_item_left_layout, parent, false);
         }
-        return new ChatViewHolder(view);
+        ChatViewHolder viewHolder = new ChatViewHolder(view);
+
+        return viewHolder;
     }
 
     @Override
@@ -76,10 +83,13 @@ public class ChatAdapter extends HeaderAndFooterAdapter<ChatMessage> {
 
         viewHolder.chatUserAvatar.setImageResource(R.mipmap.icon_my_head);
         if (message.isMeSend()) {
-            ImageLoaderHelper.loadImg(viewHolder.chatUserAvatar, LoginHelper.getUser().getUsername());
+            ImageLoaderHelper.loadCornerImg(viewHolder.chatUserAvatar, LoginHelper.getUser().getUsername());
             viewHolder.chatNickname.setText("");
         } else {
-            ImageLoaderHelper.loadImg(viewHolder.chatUserAvatar, message.getFriendUsername());
+            //by jagtu 修改聊天面部的头像
+//            ImageLoaderHelper.loadCornerImg(viewHolder.chatUserAvatar, message.getFriendUsername());
+
+            ImageLoaderHelper.loadCornerImg(viewHolder.chatUserAvatar, message.getFriendNickname());
             viewHolder.chatNickname.setText(message.getFriendNickname());
         }
 
@@ -237,7 +247,7 @@ public class ChatAdapter extends HeaderAndFooterAdapter<ChatMessage> {
         @BindView(R.id.tv_chat_msg_time)
         public TextView chatContentTime;//消息时间
         @BindView(R.id.iv_chat_avatar)
-        public ImageView chatUserAvatar;//用户头像
+        public CircleImageView chatUserAvatar;//用户头像
         @BindView(R.id.tv_chat_msg_content_text)
         public TextView chatContentText;//文本消息
         @BindView(R.id.iv_chat_msg_content_image)

@@ -1,12 +1,15 @@
 package cn.ittiger.im.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 
@@ -14,6 +17,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferListener;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
@@ -31,8 +36,12 @@ import java.util.List;
 
 import cn.ittiger.im.R;
 import cn.ittiger.im.activity.base.BaseMultiActivity;
+import cn.ittiger.im.adapter.ContactAdapter;
 import cn.ittiger.im.adapter.MultiAdapter;
+import cn.ittiger.im.app.App;
 import cn.ittiger.im.bean.ChatMessage;
+import cn.ittiger.im.bean.ContactEntity;
+import cn.ittiger.im.bean.MemberBean;
 import cn.ittiger.im.bean.RoomBean;
 import cn.ittiger.im.bean.User;
 import cn.ittiger.im.constant.FileLoadState;
@@ -41,11 +50,14 @@ import cn.ittiger.im.constant.MessageType;
 import cn.ittiger.im.smack.SmackManager;
 import cn.ittiger.im.util.AppFileHelper;
 import cn.ittiger.im.util.DBHelper;
+import cn.ittiger.im.util.DBQueryHelper;
 import cn.ittiger.im.util.LoginHelper;
 import cn.ittiger.im.util.UploadUtils;
+import cn.ittiger.util.ActivityUtil;
 import cn.ittiger.util.BitmapUtil;
 import cn.ittiger.util.DateUtil;
 import cn.ittiger.util.FileUtil;
+import cn.ittiger.util.UIUtil;
 import cn.ittiger.util.ValueUtil;
 import rx.Observable;
 import rx.Subscriber;
@@ -61,6 +73,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 多人聊天
@@ -107,6 +120,11 @@ public class MultiChatActivity extends BaseMultiActivity {
         SmackManager.getInstance().createChat(mRoomBean.getRoomJid());
         mChat = MultiUserChatManager.getInstanceFor(SmackManager.getInstance().getConnection()).getMultiUserChat(mRoomBean.getRoomJid() + "@" + SmackManager.SERVER_NAME);
         mUser = LoginHelper.getUser();
+
+        //
+        //by jagtu 刷新群组,判断是否被退群
+        refreshIsInRoom();
+
         initData();
         addReceiveFileListener();
     }
@@ -368,6 +386,75 @@ public class MultiChatActivity extends BaseMultiActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 判断是否还在群里
+     */
+    public void refreshIsInRoom() {
+
+        Observable.create(new Observable.OnSubscribe<List<RoomBean>>() {
+            @Override
+            public void call(Subscriber<? super List<RoomBean>> subscriber) {
+
+                try {
+                    SmackManager.getInstance().queryRoom();
+                    Thread.sleep(5000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                List<RoomBean> roomBeans = DBQueryHelper.queryRoom();
+                subscriber.onNext(roomBeans);
+                subscriber.onCompleted();
+
+            }
+        })
+                .subscribeOn(Schedulers.io())//指定上面的Subscriber线程
+                .observeOn(AndroidSchedulers.mainThread())//指定下面的回调线程
+                .doOnError(new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.i("====", "====失败" + throwable.toString());
+                    }
+                })
+                .subscribe(new Action1<List<RoomBean>>() {
+                    @Override
+                    public void call(List<RoomBean> roomBeans) {
+
+                        Boolean isInRoom = false;
+                        for (int i=0;i<roomBeans.size();i++){
+                            RoomBean roomBean = roomBeans.get(i);
+                            if (roomBean.getRoomJid().equals(mRoomBean.getRoomJid())){
+                                isInRoom = true;
+                                break;
+                            }
+                        }
+                        if (!isInRoom) {
+
+                            DBQueryHelper.deleteChatUser(mRoomBean.getRoomJid());
+                            DBQueryHelper.deleteChatRecord(mRoomBean.getRoomJid());
+                            DBQueryHelper.deleteChatMessage(mRoomBean.getRoomJid());
+
+                            AlertDialog alert = new AlertDialog.Builder(MultiChatActivity.this)
+                                    .setTitle("温馨提示")
+                                    .setMessage("该群组已解散或您已被踢出群组")
+                                    .setPositiveButton("知道了", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            MultiChatActivity.this.finish();
+                                        }
+                                    })
+                                    .create();
+                            alert.setCancelable(false);
+                            alert.setCanceledOnTouchOutside(false);
+                            alert.show();
+
+                        }
+                    }
+                });
+
     }
 
 }

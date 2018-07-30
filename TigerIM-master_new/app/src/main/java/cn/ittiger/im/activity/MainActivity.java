@@ -1,5 +1,6 @@
 package cn.ittiger.im.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -24,6 +25,7 @@ import cn.ittiger.im.smack.SmackManager;
 import cn.ittiger.im.smack.SmackMultiChatManager;
 import cn.ittiger.im.util.IntentHelper;
 import cn.ittiger.im.util.LoginHelper;
+import cn.ittiger.im.util.SystemUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -32,6 +34,8 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 主页面
@@ -60,6 +64,8 @@ public class MainActivity extends IMBaseActivity {
     ImageView mAddIv;
     private PopupWindow mAddPopup;
     private MainAdapter mAdapter;
+
+    private ProgressDialog mProgressDialog;
 
 
     public static void goActivity(Context context){
@@ -93,6 +99,21 @@ public class MainActivity extends IMBaseActivity {
         }
         SmackListenerManager.addGlobalListener();
         SmackMultiChatManager.bindJoinMultiChat();
+
+        mProgressDialog = new ProgressDialog(MainActivity.this);
+        mProgressDialog.setMessage("");
+        mProgressDialog.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1500);//延时1s
+                    mProgressDialog.dismiss();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -132,11 +153,12 @@ public class MainActivity extends IMBaseActivity {
                // mAddIv.setVisibility(View.GONE);
                 mPagerVp.setCurrentItem(1,false);
 
-                //by jagtu
+                //by jagtu 点击通讯录时刷新群组
                 try {
-                    SmackManager.getInstance().queryRoom();
+//                    SmackManager.getInstance().queryRoom();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.i("====", "====失败" + e.toString());
                 }
 
                 break;

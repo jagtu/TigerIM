@@ -9,6 +9,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ittiger.base.BaseActivity;
 import cn.ittiger.im.R;
+import cn.ittiger.im.util.StringUtils;
 
 /**
  * 关于
@@ -28,6 +29,7 @@ public class AboutNewActivity extends BaseActivity {
         setContentView(R.layout.activity_about_new);
         ButterKnife.bind(this);
         tvTitleContent.setText("关于");
+        tvAboutVersions.setText("V " + StringUtils.getVersionName(AboutNewActivity.this));
         imTitleBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

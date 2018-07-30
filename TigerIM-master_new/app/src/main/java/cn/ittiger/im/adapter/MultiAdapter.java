@@ -5,30 +5,47 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.roster.RosterEntry;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ittiger.im.R;
+import cn.ittiger.im.activity.GroupMessageActivity;
 import cn.ittiger.im.activity.ShowImageActivity;
+import cn.ittiger.im.app.App;
 import cn.ittiger.im.bean.ChatMessage;
+import cn.ittiger.im.bean.ContactEntity;
+import cn.ittiger.im.bean.MemberBean;
 import cn.ittiger.im.constant.EmotionType;
 import cn.ittiger.im.constant.FileLoadState;
 import cn.ittiger.im.constant.MessageType;
+import cn.ittiger.im.smack.SmackManager;
 import cn.ittiger.im.ui.recyclerview.HeaderAndFooterAdapter;
 import cn.ittiger.im.ui.recyclerview.ViewHolder;
 import cn.ittiger.im.util.ChatTimeUtil;
 import cn.ittiger.im.util.EmotionUtil;
+import cn.ittiger.im.util.IMUtil;
 import cn.ittiger.im.util.LruUtils;
+import cn.ittiger.util.PreferenceHelper;
+
+import static cn.ittiger.im.smack.SmackManager.SERVER_IP;
 
 /**
  * 消息列表数据适配器
@@ -74,8 +91,17 @@ public class MultiAdapter extends HeaderAndFooterAdapter<ChatMessage> {
     public void onBindItemViewHolder(final ViewHolder holder, int position, final ChatMessage message) {
         final ChatViewHolder viewHolder = (ChatViewHolder) holder;
         viewHolder.chatNickname.setVisibility(View.VISIBLE);
+
+        String prefix = PreferenceHelper.getString("member");
+
         if (message.isMeSend()) {
-            viewHolder.chatNickname.setText(message.getMeNickname());
+            String chatNickname = message.getMeNickname();
+            if (chatNickname!=null && chatNickname.startsWith(prefix)){
+                chatNickname = chatNickname.substring(prefix.length());
+            }
+            viewHolder.chatNickname.setText(chatNickname);
+            //by jagtu
+            viewHolder.chatUserAvatar.setTag(message.getMeNickname());
             Bitmap bitmap = LruUtils.getInstance().getMemoryCache().get(message.getMeUsername());
             if (bitmap == null) {
                 viewHolder.chatUserAvatar.setImageResource(R.mipmap.icon_my_head);
@@ -83,7 +109,13 @@ public class MultiAdapter extends HeaderAndFooterAdapter<ChatMessage> {
                 viewHolder.chatUserAvatar.setImageBitmap(bitmap);
             }
         } else {
-            viewHolder.chatNickname.setText(message.getFriendNickname());
+            String chatNickname = message.getFriendNickname();
+            if (chatNickname!=null && chatNickname.startsWith(prefix)){
+                chatNickname = chatNickname.substring(prefix.length());
+            }
+            viewHolder.chatNickname.setText(chatNickname);
+            //by jagtu
+            viewHolder.chatUserAvatar.setTag(message.getFriendNickname());
             Bitmap bitmap = LruUtils.getInstance().getMemoryCache().get(message.getFriendUsername());
             if (bitmap == null) {
                 viewHolder.chatUserAvatar.setImageResource(R.mipmap.icon_my_head);
@@ -121,6 +153,37 @@ public class MultiAdapter extends HeaderAndFooterAdapter<ChatMessage> {
             viewHolder.chatContentText.setText(message.getContent());
 //            showLoading(viewHolder, message);
         }
+
+        //by jagtu 设置群聊天-头像点击事件
+        /*
+        viewHolder.chatUserAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String tag = (String) v.getTag();
+                Log.e("lbb", "点击了头像"+tag);
+                if (tag!=null && tag.length() > 0){
+                    Boolean isHave = false;
+                    Set<RosterEntry> friends = SmackManager.getInstance().getAllFriends();
+                    if(friends!=null){
+                        for (RosterEntry friend : friends) {
+                            String userName = friend.getName();
+                            if (tag.contains(userName)){
+                                isHave = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (isHave) {
+                        String userJid = tag.indexOf("@") == -1 ? (tag + "@" + SERVER_IP) : tag;
+                        IMUtil.startChatActivity(mContext, userJid, tag);
+                    }else {
+                        Toast.makeText(mContext,"非好友无法聊天",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+        */
+
     }
 
     /**

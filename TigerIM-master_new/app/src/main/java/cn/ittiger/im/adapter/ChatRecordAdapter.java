@@ -20,6 +20,8 @@ import cn.ittiger.im.constant.EmotionType;
 import cn.ittiger.im.ui.recyclerview.HeaderAndFooterAdapter;
 import cn.ittiger.im.ui.recyclerview.ViewHolder;
 import cn.ittiger.im.util.ChatTimeUtil;
+import cn.ittiger.im.util.DBHelper;
+import cn.ittiger.im.util.DBQueryHelper;
 import cn.ittiger.im.util.EmotionUtil;
 import cn.ittiger.im.util.ImageLoaderHelper;
 import cn.ittiger.util.PreferenceHelper;
@@ -85,7 +87,7 @@ public class ChatRecordAdapter extends HeaderAndFooterAdapter<ChatRecord> {
         }else {
 //            ImageLoaderHelper.displayImage(viewHolder.avatar, item.getFriendAvatar());
             viewHolder.avatar.setImageResource(R.mipmap.icon_my_head);
-            ImageLoaderHelper.loadImg(viewHolder.avatar, item.getFriendNickname());
+            ImageLoaderHelper.loadCornerImg(viewHolder.avatar, item.getFriendNickname());
         }
         String nick = item.getFriendNickname();
         if(TextUtils.isEmpty(nick)){
@@ -116,6 +118,7 @@ public class ChatRecordAdapter extends HeaderAndFooterAdapter<ChatRecord> {
             if(viewHolder.message.getVisibility() == View.GONE) {
                 viewHolder.message.setVisibility(View.VISIBLE);
             }
+            //by jagtu 设置消息列表 最近一条聊天记录
             SpannableString content = EmotionUtil.getInputEmotionContent(mContext, EmotionType.EMOTION_TYPE_CLASSIC, viewHolder.message, item.getLastMessage());
             viewHolder.message.setText(content);
         }
@@ -169,6 +172,8 @@ public class ChatRecordAdapter extends HeaderAndFooterAdapter<ChatRecord> {
         viewHolder.mDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //by jagtu 删除消息
                 if(viewHolder.mRoot.getTranslationX() != 0){
                     viewHolder.mRoot.setTranslationX(0);
                 }
@@ -179,11 +184,24 @@ public class ChatRecordAdapter extends HeaderAndFooterAdapter<ChatRecord> {
         });
     }
 
-    public void update(int position){
+    public String update(int position){
+        String userName = null;
         if(mList!=null){
+
+            //by jagtu 删除消息
+            ChatRecord chatRecord = mList.get(position);
+            userName = chatRecord.getFriendUsername();
+            try {
+                DBQueryHelper.deleteChatUser(userName);
+                DBQueryHelper.deleteChatRecord(userName);
+                DBQueryHelper.deleteChatMessage(userName);
+            } catch (Exception e){
+            }
+
             mList.remove(position);
             notifyDataSetChanged();
         }
+        return userName;
     }
 
     public interface OnItemClick{

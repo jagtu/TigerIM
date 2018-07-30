@@ -142,7 +142,6 @@ public class EmotionDataHelper {
         sEmotionClassicMap.put("[K歌]", R.mipmap.d_kge);
         sEmotionClassicMap.put("[购物]", R.mipmap.d_gouwu);
         sEmotionClassicMap.put("[邮件]", R.mipmap.d_youjian);
-        sEmotionClassicMap.put("[帅]", R.mipmap.d_shuai);
         sEmotionClassicMap.put("[喝彩]", R.mipmap.d_hecai);
         sEmotionClassicMap.put("[祈祷]", R.mipmap.d_qidao);
         sEmotionClassicMap.put("[爆筋]", R.mipmap.d_baojin);

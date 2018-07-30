@@ -15,13 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@color/white"
-        android:numColumns="6"
+        android:numColumns="5"
         android:padding="@dimen/dimen_10"
         android:verticalSpacing="@dimen/dimen_10"
         />
 
     <LinearLayout
-
         android:id="@+id/ll_nickname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

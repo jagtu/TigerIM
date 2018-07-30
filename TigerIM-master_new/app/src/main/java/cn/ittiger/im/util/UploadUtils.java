@@ -1,5 +1,6 @@
 package cn.ittiger.im.util;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ public class UploadUtils {
     private static String domainVoice = "http://p7dsfgicj.bkt.clouddn.com";
     private static String domainImage = "http://p84whdsjt.bkt.clouddn.com";
     private Context mContext;
+    private ProgressDialog mProgressDialog;
 
     //密钥配置
     private Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
@@ -46,6 +48,9 @@ public class UploadUtils {
 
     public UploadUtils(Context context) {
         mContext = context;
+
+        mProgressDialog = new ProgressDialog(context);
+        mProgressDialog.setMessage("上传中...");
     }
 
     public void setSuccessListener(SuccessListener mSuccessListener) {
@@ -55,9 +60,12 @@ public class UploadUtils {
     public void uploadVoice(String key, File file, final double duration) throws IOException {
         try {
             //调用put方法上传
+            mProgressDialog.show();
             uploadManager.put(file, key, getVoiceUpToken(), new UpCompletionHandler() {
                 @Override
                 public void complete(String key, ResponseInfo info, JSONObject response) {
+
+                    mProgressDialog.dismiss();
                     VoiceBean voiceBean = new Gson().fromJson(response.toString(), VoiceBean.class);
                     if (voiceBean == null) {
                         Toast.makeText(mContext, "发送语音失败", Toast.LENGTH_SHORT).show();
@@ -71,6 +79,7 @@ public class UploadUtils {
 
         } catch (Exception e) {
             e.printStackTrace();
+            mProgressDialog.dismiss();
         }
     }
 
@@ -80,10 +89,14 @@ public class UploadUtils {
 
     public void uploadImage(String key, File file) throws IOException {
         try {
+            mProgressDialog.show();
+
             //调用put方法上传
             uploadManager.put(file, key, getImageUpToken(), new UpCompletionHandler() {
                 @Override
                 public void complete(String key, ResponseInfo info, JSONObject response) {
+
+                    mProgressDialog.dismiss();
                     ImageBean imageBean = new Gson().fromJson(response.toString(), ImageBean.class);
                     if (imageBean == null) {
                         Toast.makeText(mContext, "发送图片失败", Toast.LENGTH_SHORT).show();
@@ -96,6 +109,7 @@ public class UploadUtils {
             }, null);
 
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
         }
     }

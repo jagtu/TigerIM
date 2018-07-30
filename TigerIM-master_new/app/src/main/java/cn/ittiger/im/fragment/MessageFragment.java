@@ -52,6 +52,10 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+import static cn.ittiger.im.constant.MessageType.MESSAGE_TYPE_IMAGE;
+import static cn.ittiger.im.constant.MessageType.MESSAGE_TYPE_TEXT;
+import static cn.ittiger.im.constant.MessageType.MESSAGE_TYPE_VOICE;
+
 /**
  * 聊天消息列表
  *
@@ -188,7 +192,10 @@ public class MessageFragment extends BaseFragment implements CommonRecyclerView.
                             @Override
                             public void onRemove(int position) {
                                 if(mAdapter!=null){
-                                    mAdapter.update(position);
+                                    String delUserName = mAdapter.update(position);
+                                    if (delUserName!=null){
+                                        mMap.remove(delUserName);
+                                    }
                                 }
                             }
                         });
@@ -307,12 +314,30 @@ public class MessageFragment extends BaseFragment implements CommonRecyclerView.
         }
         ChatRecord chatRecord = getChatRecord(message);
         if (chatRecord == null) {//还没有创建此朋友的聊天记录
+
+//            if (!message.isMeSend() && message.isMulti()){
+//                try {
+//                    SmackManager.getInstance().queryRoom();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+
             chatRecord = new ChatRecord(message);
             chatRecord.setMulti(message.isMulti());
             addChatRecord(chatRecord);
 //            chatRecord.setUuid(message.getRoomJid());
             if (message.getRoomJid() != null) {
-                chatRecord.setFriendNickname(DBQueryHelper.queryRoomName(message.getRoomJid()));
+                //判断是否需要刷新群组信息 by jagtu
+                String nickName = DBQueryHelper.queryRoomName(message.getRoomJid());
+                if (nickName == null || nickName.length() == 0 || nickName.equals(message.getRoomJid())){
+                    try {
+                        SmackManager.getInstance().queryRoom();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                chatRecord.setFriendNickname(nickName);
             } else {
                 chatRecord.setFriendNickname(message.getFriendNickname());
             }
@@ -338,7 +363,17 @@ public class MessageFragment extends BaseFragment implements CommonRecyclerView.
         } else {
 //            chatRecord.setUuid(message.getUuid());
             chatRecord.setChatTime(message.getDatetime());
-            chatRecord.setLastMessage(message.getContent());
+
+            if (message.getMessageType() == MESSAGE_TYPE_TEXT.value()) {
+                chatRecord.setLastMessage(message.getContent());
+            }else if (message.getMessageType() == MESSAGE_TYPE_IMAGE.value()) {
+                chatRecord.setLastMessage("[图片]");
+            }else if (message.getMessageType() == MESSAGE_TYPE_VOICE.value()) {
+                chatRecord.setLastMessage("[语音]");
+            }else{
+                chatRecord.setLastMessage(message.getContent());
+            }
+
             if (message.isMeSend()) {
                 chatRecord.initMessageCount();
             } else {
@@ -429,4 +464,16 @@ public class MessageFragment extends BaseFragment implements CommonRecyclerView.
 //        unbinder = ButterKnife.bind(this, rootView);
 //        return rootView;
 //    }
+
+
+    //刷新群组成功
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onReceiveQueryRoom(RoomBean room) {
+
+        Log.d("onReceiveQueryRoom","刷新群组成功");
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
 }

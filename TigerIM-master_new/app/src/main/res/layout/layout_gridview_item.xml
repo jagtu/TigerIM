@@ -9,11 +9,15 @@
     >
     <RelativeLayout
         android:layout_width="@dimen/dimen_50"
-        android:layout_height="@dimen/dimen_50">
-        <ImageView
+        android:layout_height="@dimen/dimen_50"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        >
+        <cn.ittiger.im.ui.CircleImageView
             android:id="@+id/item_im"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:src="@mipmap/icon_my_head"/>
         <TextView
             android:id="@+id/item_owner"
             android:visibility="gone"
@@ -29,10 +33,12 @@
     </RelativeLayout>
     <TextView
         android:id="@+id/item_name"
-        android:layout_width="50dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:lines="1"
         android:gravity="center"
         android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:text="昵称"
         />
 </LinearLayout>

@@ -1,5 +1,6 @@
 package cn.ittiger.im.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -21,6 +23,7 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -57,6 +60,9 @@ public class MultiListActivity extends BaseActivity {
     @BindView(R.id.add_iv)
     ImageView mAdd;
     private MultiContactAdapter mMultiContactAdapter;
+    private ProgressDialog dialog;
+    private Boolean showRefreshRooms;
+
 
     public static final int REQUEST_ADD_MSG = 1001;
 
@@ -99,6 +105,9 @@ public class MultiListActivity extends BaseActivity {
             }
         });
         init();
+        showRefreshRooms = false;
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("加载中...");
     }
 
     @Override
@@ -174,14 +183,56 @@ public class MultiListActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        SmackListenerManager.getInstance().addQueryPacketListener();
+
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        //by jagtu 刷新群组
+        try {
+            if (showRefreshRooms){
+                dialog.show();
+                List<RoomBean> nullList = new ArrayList<>();
+                mMultiContactAdapter.addData(nullList);
+            }else {
+                showRefreshRooms = true;
+            }
+            SmackManager.getInstance().queryRoom();
+
+        } catch (Exception e) {
+            Log.i("====", "====失败" + e.toString());
+            e.printStackTrace();
+            if (showRefreshRooms) {
+                init();
+            }
+            if (dialog!=null && dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+
+    }
+
+    //刷新群组成功
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onReceiveQueryRoom(RoomBean room) {
+
+        if (dialog!=null) {
+            dialog.dismiss();
+        }
+        mMultiContactAdapter.addData(room);
+
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        dialog.dismiss();
         EventBus.getDefault().unregister(this);
     }
 }

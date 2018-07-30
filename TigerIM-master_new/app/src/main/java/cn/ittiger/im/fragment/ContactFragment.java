@@ -44,6 +44,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +85,7 @@ public class ContactFragment extends BaseFragment {
             @Override
             public void call(Subscriber<? super List<ContactEntity>> subscriber) {
 
+                //by jagtu 获取好友
                 Set<RosterEntry> friends = SmackManager.getInstance().getAllFriends();
                 List<ContactEntity> list = new ArrayList<>();
                 if(friends!=null){
@@ -97,6 +99,10 @@ public class ContactFragment extends BaseFragment {
                         if (memberBean != null) {
                             if (userName.startsWith(memberBean.getPrefix())) {
                                 userName = userName.substring(memberBean.getPrefix().length());
+                            }
+                            else if(userName.startsWith("#"+memberBean.getPrefix())){
+                                //处理客服账户
+                                userName = "~"+userName.substring(memberBean.getPrefix().length()+1);
                             }
                         }
                         try {
@@ -213,6 +219,10 @@ public class ContactFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         Log.i("ContactFragment","ContactFragment onResume");
+
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -221,6 +231,16 @@ public class ContactFragment extends BaseFragment {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
         mAdapter = null;
+    }
+
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+
+
+        Log.i("ContactFragment","ContactFragment onCreateAnimation");
+
+        return super.onCreateAnimation(transit, enter, nextAnim);
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

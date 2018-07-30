@@ -9,6 +9,7 @@
     <color name="white">#ffFFFFFF</color><!--白色 -->
     <color name="black">#000000</color><!--黑色 -->
     <color name="transparency">#00000000</color><!--透明 -->
+    <color name="vifrification">#00000000</color>   <!-- 透明 -->
     <color name="main_color">@color/colorPrimary</color>
     <color name="blue_tint">#c4e1ff</color>
     <color name="gray_text">#adadadad</color>

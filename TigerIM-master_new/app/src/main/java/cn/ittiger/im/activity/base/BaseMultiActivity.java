@@ -1,5 +1,7 @@
 package cn.ittiger.im.activity.base;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ittiger.im.R;
 import cn.ittiger.im.activity.GroupMessageActivity;
+import cn.ittiger.im.activity.MultiListActivity;
 import cn.ittiger.im.adapter.MultiAdapter;
 import cn.ittiger.im.bean.ChatMessage;
 import cn.ittiger.im.bean.RoomBean;
@@ -118,6 +121,8 @@ public abstract class BaseMultiActivity extends IMBaseActivity implements ChatKe
     }
 
     protected void initData() {
+
+
         Observable.create(new Observable.OnSubscribe<List<ChatMessage>>() {
             @Override
             public void call(Subscriber<? super List<ChatMessage>> subscriber) {

@@ -23,7 +23,7 @@
             android:id="@+id/tv_about_versions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="科奇通讯   1.0.2"
+            android:text="科奇通讯   2.0.2"
             android:layout_marginTop="@dimen/dimen_20"
             android:textColor="@color/newmaincolor"/>
     </LinearLayout>

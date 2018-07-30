@@ -117,9 +117,112 @@ public class ImageLoaderHelper {
                         if (bitmap == null) {
                             bitmap = SmackManager.getInstance().getUserImage(name);
                             if (bitmap != null) {
-                                bitmap = SystemUtils.createCircleImage(bitmap);
+//                                bitmap = SystemUtils.createCircleImage(bitmap);
                                 LruUtils.getInstance().getMemoryCache().put(name, bitmap);
                             }
+                        }
+                        return imageView;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ImageView>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ImageView imageView) {
+                        Bitmap bitmap = LruUtils.getInstance().getMemoryCache().get(imageView.getTag() + "");
+                        if (bitmap != null && imageView.getTag().equals(userName)) {
+//                            bitmap = SystemUtils.createCircleImage(bitmap);
+                            imageView.setImageBitmap(bitmap);
+                            Log.i("bitmap", "onNext: "+bitmap.getByteCount());
+                        } else {
+                            Log.i("iop", "getView: null img");
+                        }
+                    }
+                });
+    }
+
+
+    public static void loadCornerImg(final ImageView imageView,  String name) {
+
+        //bu jagtu
+        String prefix = PreferenceHelper.getString("member");
+
+        final String userName = (name.indexOf("#")==-1) ? (prefix + name) : name;
+        imageView.setTag(userName);
+        Bitmap bitmap = LruUtils.getInstance().getMemoryCache().get(userName);
+        if (bitmap != null) {
+            bitmap = SystemUtils.createCircleImage(bitmap);
+            imageView.setImageBitmap(bitmap);
+        }
+
+        Observable.just(imageView)
+                .map(new Func1<ImageView, ImageView>() {
+                    @Override
+                    public ImageView call(ImageView imageView) {
+                        String name = imageView.getTag() + "";
+                        //by jagtu 去掉缓存图片
+
+                        Bitmap bitmap = SmackManager.getInstance().getUserImage(name);
+                        if (bitmap != null) {
+                            LruUtils.getInstance().getMemoryCache().put(name, bitmap);
+                        }
+                        return imageView;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ImageView>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ImageView imageView) {
+                        Bitmap bitmap = LruUtils.getInstance().getMemoryCache().get(imageView.getTag() + "");
+                        if (bitmap != null && imageView.getTag().equals(userName)) {
+                            bitmap = SystemUtils.createCircleImage(bitmap);
+                            imageView.setImageBitmap(bitmap);
+                            Log.i("bitmap", "loadCornerImg onNext: "+bitmap.getByteCount());
+                        } else {
+                            Log.i("iop", "loadCornerImg: null img");
+                        }
+                    }
+                });
+        Log.i("loadCornerImg", "loadCornerImg");
+    }
+
+
+    public static void loadCornerImgNoCache(final ImageView imageView,  String name) {
+
+        //bu jagtu
+        String prefix = PreferenceHelper.getString("member");
+
+        final String userName = (name.indexOf("#")==-1) ? (prefix + name) : name;
+        imageView.setTag(userName);
+        Observable.just(imageView)
+                .map(new Func1<ImageView, ImageView>() {
+                    @Override
+                    public ImageView call(ImageView imageView) {
+                        String name = imageView.getTag() + "";
+                        Bitmap bitmap = SmackManager.getInstance().getUserImage(name);
+                        if (bitmap != null) {
+                            LruUtils.getInstance().getMemoryCache().put(name, bitmap);
                         }
                         return imageView;
                     }

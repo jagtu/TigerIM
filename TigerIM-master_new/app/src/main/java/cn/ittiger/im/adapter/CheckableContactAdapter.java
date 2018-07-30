@@ -14,6 +14,7 @@ import cn.ittiger.im.adapter.viewholder.CreateMultiChatViewHolder;
 import cn.ittiger.im.app.App;
 import cn.ittiger.im.bean.CheckableContactEntity;
 import cn.ittiger.im.bean.MemberBean;
+import cn.ittiger.im.util.ImageLoaderHelper;
 import cn.ittiger.indexlist.adapter.IndexStickyViewAdapter;
 import cn.ittiger.util.PreferenceHelper;
 
@@ -70,6 +71,9 @@ public class CheckableContactAdapter extends IndexStickyViewAdapter<CheckableCon
                 name = name.substring(bean.getPrefix().length());
             }
         }
+
+        ImageLoaderHelper.loadCornerImg(viewHolder.getImageView(), name);
+
         viewHolder.getTextView().setText(name);
     }
 }

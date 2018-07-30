@@ -85,6 +85,29 @@ public final class IMUtil {
         }
     }
 
+    /**
+     * 从联系人列表中发起聊天跳转到聊天界面
+     *
+     * @param context
+     * @param jidFull  xxx@172.x.x.x
+     * @param name  xxx
+     */
+    public static void startChatActivity(Context context, String jidFull, String name) {
+
+        ChatUser chatUser = DBQueryHelper.queryChatUser(jidFull,name);
+
+        ChatRecord chatRecord = DBQueryHelper.queryChatRecordBjid(chatUser.getChatJid());
+        if(chatRecord == null) {
+//            chatRecord = new ChatRecord(chatUser);
+            startChatActivity(context, chatUser);
+        } else {
+//            EventBus.getDefault().post(chatRecord);//发起聊天时，发送一个事件到消息列表界面进行处理，如果不存在此聊天记录则创建一个新的
+//            chatUser.setUuid(chatRecord.getUuid());
+            chatRecord.initMessageCount();
+            startChatActivity(context, chatRecord);
+        }
+    }
+
     public static void startChatActivity(Context context, ChatUser chatUser) {
 
         Intent intent = new Intent(context, ChatActivity.class);

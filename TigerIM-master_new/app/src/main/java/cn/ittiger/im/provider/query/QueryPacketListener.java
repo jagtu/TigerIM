@@ -32,7 +32,7 @@ public class QueryPacketListener implements PacketListener {
     @Override
     public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
         if(packet instanceof QueryRoom){
-            Log.i("=====","===query==="+packet.toXML());
+            Log.i("=====","===query==="+packet.toXML().length());
         }
     }
 }

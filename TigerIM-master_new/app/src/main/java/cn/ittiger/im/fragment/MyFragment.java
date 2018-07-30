@@ -1,6 +1,7 @@
 package cn.ittiger.im.fragment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,11 +19,17 @@ import cn.ittiger.im.R;
 import cn.ittiger.im.activity.AboutNewActivity;
 import cn.ittiger.im.activity.PersonalDetailsActivity;
 import cn.ittiger.im.activity.SettingActivity;
+import cn.ittiger.im.activity.ShowImageActivity;
 import cn.ittiger.im.activity.base.BaseFragment;
+import cn.ittiger.im.adapter.ChatAdapter;
 import cn.ittiger.im.bean.User;
+import cn.ittiger.im.smack.SmackManager;
 import cn.ittiger.im.ui.CircleImageView;
+import cn.ittiger.im.ui.MyImageDialog;
 import cn.ittiger.im.util.ImageLoaderHelper;
 import cn.ittiger.im.util.LoginHelper;
+import cn.ittiger.im.util.LruUtils;
+import cn.ittiger.im.util.SystemUtils;
 import cn.ittiger.util.PreferenceHelper;
 
 
@@ -73,6 +80,15 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(intent);
             }
         });
+
+        imMyHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("lbb", "点击了头像");
+                ShowImageActivity.startByUserName(getActivity(), LoginHelper.getUser().getUsername());
+            }
+        });
+
         rlSeitting.setOnClickListener(this);
         rlAbout.setOnClickListener(this);
     }
@@ -116,6 +132,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
 //            }
             Log.i("=====","======更改头像"+nickName);
             ImageLoaderHelper.loadImg(imMyHead, nickName);
+
         }
     }
 

@@ -49,6 +49,7 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -126,6 +127,9 @@ public class CreateMultiChatActivity extends IMBaseActivity {
                 }
                 dialog.show();
                 createMultiChat(name);
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
             }
         });
         mOkTv.setOnClickListener(new View.OnClickListener() {
@@ -268,11 +272,17 @@ public class CreateMultiChatActivity extends IMBaseActivity {
             mCreateBtn.setEnabled(true);
             Toast.makeText(this, "群聊创建失败,请稍后重试...", Toast.LENGTH_SHORT);
         } else {
+
+            //by jagtu 先把群主加入群中
+            joinRoom();
+
             mTitle.setText("选择群成员");
             mBack.setVisibility(View.GONE);
             mCreateLl.setVisibility(View.GONE);
             mOkTv.setVisibility(View.VISIBLE);
             mIndexStickyView.setVisibility(View.VISIBLE);
+
+//            mAdapter.notifyDataSetChanged();
         }
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
@@ -289,6 +299,11 @@ public class CreateMultiChatActivity extends IMBaseActivity {
         }
         if (roomUser == null || roomUser.size() == 0) {
             Toast.makeText(this, "加入失败,请稍后重试", Toast.LENGTH_SHORT).show();
+        } else if(roomUser.size() == 1){
+
+            //by jagtu:只有群主一人
+            //什么都不做
+
         } else {
             String userName = LoginHelper.getUser().getUsername();
             RoomBean roomBean = new RoomBean(mCreateRoom.getGroupid(),mCreateRoom.getGroupname(),SmackManager.getInstance().getChatJid(userName));

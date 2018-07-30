@@ -3,8 +3,13 @@ package cn.ittiger.im.adapter.viewholder;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ittiger.im.R;
+import cn.ittiger.im.activity.AddGroupMemberActivity;
+import cn.ittiger.im.activity.GroupMessageActivity;
+import cn.ittiger.im.activity.ShowImageActivity;
+import cn.ittiger.im.util.LoginHelper;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,6 +29,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
 
         super(itemView);
         ButterKnife.bind(this, itemView);
+
     }
 
     public ImageView getImageView() {
